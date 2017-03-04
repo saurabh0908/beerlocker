@@ -50,27 +50,18 @@ exports.putBeer = function(req, res) {
   Beer.update({userId: req.user._id, _id: req.params.beer_id}, {quantity: req.body.quantity},  function(err, num, raw) {
     if (err)
       res.send(err);
-    // Update the existing beer quantity
-    beer.quantity = req.body.quantity;
 
-    // Save the beer and check for error
-    beer.save(function(err) {
-      if (err)
-        res.send(err);
-
-      res.json(beer);
+      res.json({message: num + ' updated'});
     });
-  });
 };
 
 // Create endpoint /api/beers/:beer_id for DELETE
 
 exports.deleteBeer = function(req, res) {
-  Beer.findByIdAndRemove(req.params.beer_id, function(err) {
+  Beer.remove({userId: req.user._id, _id: req.params.beer_id}, function(err) {
     if (err)
       res.send(err);
-
     res.json({message: 'Beer removed from the locker!'});
   });
 
-}
+};
