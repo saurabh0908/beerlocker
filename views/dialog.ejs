@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Beer Locker</title>
+  </head>
+  <body>
+    <p>Hi <%= user.username %>!</p>
+    <p><b><%= client.name %></b> is requesting <b>full access</b> to your account.</p>
+    <p>Do you approve?</p>
+
+    <form class="" action="/api/oauth2/authorize" method="post">
+      <input type="hidden" name="transaction_id" value="<%= transactionID %>">
+      <div>
+        <input type="submit" id="allow" value="Allow">
+        <input type="submit" id="deny" name="cancel" value="Deny">
+      </div>
+    </form>    
+  </body>
+</html>
