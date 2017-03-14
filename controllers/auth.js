@@ -2,6 +2,8 @@
 var passport = require('passport');
 var BasicStrategy = require('passport-http').BasicStrategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
+
 var User = require('../models/user');
 var Client = require('../models/client');
 var Token = require('../models/token');
@@ -66,6 +68,30 @@ passport.use(new BearerStrategy(
   }
 ));
 
-exports.isAuthenticated = passport.authenticate(['basic', 'bearer'], {session: false});
+passport.use(new LocalStrategy(
+  function(username, password, callback) {
+    User.findOne({username: username}, function(err, user) {
+      if (err) {return callback(err); }
+
+      // No user found with that username
+      if (!user) { return callback(null, false); }
+
+      // Make sure that the password is correct
+      user.verifyPassword(password, function(err, isMatch) {
+        if (err) { return callback(err); }
+
+        // password did not match
+        if (!isMatch) { return callback(null, false); }
+
+        //Success
+        return callback(null, user);
+      });
+    });
+  }
+));
+
+
+
+exports.isAuthenticated = passport.authenticate(['local', 'bearer'], {session: false});
 exports.isClientAuthenticated = passport.authenticate('client-basic', {session: false});
 exports.isBearerAuthenticated = passport.authenticate('bearer', {session: false});
